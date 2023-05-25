@@ -1,0 +1,45 @@
+name: task-management
+recipe: laravel
+config:
+    webroot: ./public
+    php: '8.2'
+proxy:
+    appserver:
+        - task-management.localhost
+services:
+    appserver:
+        scanner: false
+        xdebug: debug
+        build_as_root:
+            - curl -sL https://deb.nodesource.com/setup_18.x | bash -
+            - apt-get install -y nodejs
+            - composer update
+    database:
+        type: mysql
+        portforward: 33072
+        creds:
+            user: username
+            password: password
+            database: task_management
+    node:
+        type: node:18
+        scanner: false
+        ports:
+            - '5182:5182'
+            - '13712:13712'
+        build:
+            - yarn install
+tooling:
+    node:
+        service: appserver
+    yarn:
+        service: node
+    dev:
+        service: node
+        cmd: yarn dev
+    build:
+        service: node
+        cmd: yarn build
+    ssr:
+        service: appserver
+        cmd: php artisan inertia:start-ssr
