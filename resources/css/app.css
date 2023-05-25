@@ -1,3 +1,10 @@
 @tailwind base;
+
+@layer base {
+    * {
+        @apply transition-all;
+    }
+}
+
 @tailwind components;
 @tailwind utilities;
